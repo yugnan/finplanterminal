@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<title>Komunitas Tools — Beranda Harian</title>
+<style>
+  :root {
+    --brand: #2563eb; --brand-dark: #1d4ed8;
+    --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0;
+    --text: #0f172a; --muted: #64748b;
+    --ok-bg: #f0fdf4; --ok-text: #166534;
+    --high-bg: #fef2f2; --high-text: #b91c1c;
+    --mid-bg: #f1f5f9; --mid-text: #475569;
+    --amber-bg: #fffbeb; --amber-text: #92400e;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
+  header { background: var(--card); border-bottom: 1px solid var(--border); padding: 16px 24px; }
+  header h1 { font-size: 16px; margin: 0; color: var(--brand-dark); }
+  header p { font-size: 12px; color: var(--muted); margin: 2px 0 0; }
+  main { max-width: 740px; margin: 0 auto; padding: 24px 24px 60px; }
+  h2 { font-size: 18px; margin: 0 0 4px; }
+  h3 { font-size: 15px; margin: 32px 0 4px; }
+  .sub { font-size: 13px; color: var(--muted); margin: 0 0 16px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+
+  .digest { background: linear-gradient(0deg, var(--card), var(--card)); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+  .digest-date { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .digest-title { font-size: 17px; font-weight: 600; margin: 0 0 14px; }
+  .digest-stats { display: flex; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .digest-stat { flex: 1; min-width: 140px; background: #f8fafc; border-radius: 10px; padding: 10px 14px; }
+  .digest-stat .num { font-size: 20px; font-weight: 600; color: var(--brand-dark); }
+  .digest-stat .lbl { font-size: 11.5px; color: var(--muted); }
+  .notif-item { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid var(--border); font-size: 13px; }
+  .notif-item .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); flex-shrink: 0; }
+  .notif-item .txt { flex: 1; }
+  .notif-item .when { font-size: 11px; color: var(--muted); }
+
+  .lesson-card { display: flex; align-items: center; gap: 14px; }
+  .lesson-icon { width: 40px; height: 40px; border-radius: 10px; background: #eff6ff; color: var(--brand-dark); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .lesson-body { flex: 1; }
+  .lesson-title { font-size: 13.5px; font-weight: 500; margin: 0 0 2px; }
+  .lesson-text { font-size: 12.5px; color: var(--muted); margin: 0; }
+  .streak { font-size: 11px; color: var(--brand-dark); margin-top: 6px; }
+  .lesson-btn { background: #f1f5f9; color: var(--brand-dark); border: none; border-radius: 8px; padding: 6px 12px; font-size: 12.5px; font-weight: 500; cursor: pointer; flex-shrink: 0; }
+  .lesson-btn.done { background: var(--ok-bg); color: var(--ok-text); }
+
+  .explainer { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px 20px; margin-bottom: 20px; }
+  .explainer-toggle { width: 100%; text-align: left; background: none; border: none; font-size: 14px; font-weight: 500; color: var(--text); cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 0; }
+  .explainer-toggle .icon { font-size: 12px; color: var(--muted); transition: transform 0.15s; }
+  .explainer-toggle.open .icon { transform: rotate(180deg); }
+  .explainer-body { margin-top: 14px; display: none; }
+  .explainer-body.open { display: block; }
+  .explainer-desc { font-size: 12.5px; color: var(--muted); line-height: 1.6; margin: 0 0 18px; }
+  .funnel-compare { display: flex; gap: 28px; justify-content: center; flex-wrap: wrap; }
+  .funnel-col { flex: 1; min-width: 200px; display: flex; flex-direction: column; align-items: center; }
+  .funnel-col-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .funnel-col-start { font-size: 10.5px; color: var(--muted); margin-bottom: 10px; }
+  .funnel-box { border-radius: 10px; padding: 8px 14px; text-align: center; }
+  .funnel-box.w1 { width: 100%; } .funnel-box.w2 { width: 80%; } .funnel-box.w3 { width: 60%; }
+  .fb-title { font-size: 12.5px; font-weight: 500; }
+  .fb-sub { font-size: 11px; opacity: 0.85; margin-top: 2px; }
+  .funnel-arrow-c { font-size: 12px; color: var(--muted); margin: 4px 0; }
+  .funnel-note { font-size: 11px; color: var(--muted); margin-top: 8px; font-style: italic; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; min-height: 32px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; background: #eff6ff; color: var(--brand-dark); border-radius: 999px; padding: 4px 10px 4px 12px; font-size: 13px; }
+  .chip button { background: none; border: none; color: var(--brand-dark); cursor: pointer; font-size: 14px; padding: 0; line-height: 1; }
+  .add-row { display: flex; gap: 8px; }
+  input[type=text], input[type=search] { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; }
+  input:focus { outline: 2px solid var(--brand); border-color: var(--brand); }
+  button.primary { background: var(--brand); color: #fff; border: none; border-radius: 8px; padding: 8px 14px; font-size: 13px; font-weight: 500; cursor: pointer; }
+  button.primary:hover { background: var(--brand-dark); }
+  .quick-sectors { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .quick-sectors span { font-size: 12px; color: var(--brand-dark); background: #f1f5f9; border-radius: 999px; padding: 3px 10px; cursor: pointer; border: 1px solid var(--border); }
+  .note-small { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .search-row { margin-bottom: 16px; }
+
+  .filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .filters button { background: #fff; border: 1px solid var(--border); border-radius: 999px; padding: 5px 14px; font-size: 12.5px; cursor: pointer; color: var(--muted); }
+  .filters button.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+
+  .event-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px; margin-bottom: 14px; }
+  .event-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .date-block { text-align: center; min-width: 52px; }
+  .date-block .day { font-size: 20px; font-weight: 600; line-height: 1; }
+  .date-block .mon { font-size: 11px; color: var(--muted); text-transform: uppercase; }
+  .event-main { flex: 1; }
+  .event-title-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+  .flag { font-size: 11px; background: #f1f5f9; color: #334155; border-radius: 4px; padding: 2px 6px; font-weight: 500; }
+  .importance { font-size: 10.5px; border-radius: 999px; padding: 2px 8px; font-weight: 500; }
+  .importance.tinggi { background: var(--high-bg); color: var(--high-text); }
+  .importance.menengah { background: var(--mid-bg); color: var(--mid-text); }
+  .status { font-size: 10.5px; color: var(--muted); }
+  .match-badge { font-size: 10.5px; background: var(--ok-bg); color: var(--ok-text); border-radius: 999px; padding: 2px 8px; font-weight: 500; }
+  .event-name { font-size: 14.5px; font-weight: 500; margin: 2px 0 6px; }
+  .source-line { font-size: 11.5px; color: var(--muted); margin-bottom: 8px; }
+  .source-line a { color: var(--brand-dark); text-decoration: none; }
+  .figures { display: flex; gap: 16px; font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .figures b { color: var(--text); font-weight: 500; }
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .funnel-toggle, .note-toggle { background: #f1f5f9; color: var(--brand-dark); border: none; border-radius: 8px; padding: 6px 12px; font-size: 12.5px; font-weight: 500; cursor: pointer; }
+  .funnel-toggle:hover, .note-toggle:hover { background: #e2e8f0; }
+  .funnel { display: none; margin-top: 14px; border-top: 1px dashed var(--border); padding-top: 14px; }
+  .funnel.open { display: block; }
+  .funnel-step { margin-bottom: 12px; }
+  .funnel-step .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 6px; }
+  .funnel-arrow { text-align: center; color: var(--muted); font-size: 12px; margin: 4px 0; }
+  .sector-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .sector-pill { font-size: 12px; background: #eff6ff; color: var(--brand-dark); border-radius: 999px; padding: 3px 10px; }
+  .emiten-group { margin-bottom: 10px; }
+  .emiten-group-label { font-size: 11.5px; color: var(--muted); margin-bottom: 4px; }
+  .emiten-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .emiten-chip { font-size: 12px; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 3px 8px; }
+  .expand-btn { font-size: 12px; color: var(--brand-dark); background: none; border: none; cursor: pointer; padding: 0; margin-top: 4px; text-decoration: underline; }
+  .context { font-size: 12.5px; color: var(--muted); line-height: 1.5; margin-top: 8px; }
+
+  .note-panel { display: none; margin-top: 14px; border-top: 1px dashed var(--border); padding-top: 14px; }
+  .note-panel.open { display: block; }
+  .note-panel textarea { width: 100%; min-height: 70px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 10px; font-size: 13px; font-family: inherit; resize: vertical; }
+  .note-panel .saved { font-size: 11.5px; color: var(--ok-text); margin-top: 6px; display: none; }
+  .note-panel .saved.show { display: block; }
+
+  .disc-item { border-bottom: 1px solid var(--border); padding: 16px 0; }
+  .disc-item:last-child { border-bottom: none; }
+  .disc-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+  .disc-emiten { font-size: 12px; font-weight: 600; background: #f1f5f9; border-radius: 6px; padding: 2px 8px; }
+  .disc-type { font-size: 10.5px; border-radius: 999px; padding: 2px 8px; font-weight: 500; }
+  .disc-type.Dividen { background: #f0fdf4; color: #166534; }
+  .disc-type.RUPS { background: #eff6ff; color: var(--brand-dark); }
+  .disc-type.Laporan { background: #fefce8; color: #854d0e; }
+  .disc-type.Korporasi { background: #fdf2f8; color: #9d174d; }
+  .disc-type.Manajemen { background: #f1f5f9; color: #475569; }
+  .disc-type.Media { background: var(--amber-bg); color: var(--amber-text); }
+  .disc-date { font-size: 11px; color: var(--muted); margin-left: auto; }
+  .disc-title { font-size: 14px; font-weight: 500; margin: 0 0 6px; }
+  .disc-summary { font-size: 12.5px; color: var(--muted); line-height: 1.5; margin: 0 0 8px; }
+  .disc-link { font-size: 12px; color: var(--brand-dark); text-decoration: none; }
+
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 13px; }
+
+  .news-item { border-bottom: 1px solid var(--border); padding: 14px 0; }
+  .news-item:last-child { border-bottom: none; }
+  .news-top { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+  .news-tag { font-size: 10.5px; border-radius: 999px; padding: 2px 8px; font-weight: 500; }
+  .news-tag.kalender { background: #eff6ff; color: var(--brand-dark); }
+  .news-tag.keterbukaan { background: #fdf2f8; color: #9d174d; }
+  .news-tag.media { background: var(--amber-bg); color: var(--amber-text); }
+  .news-date { font-size: 11px; color: var(--muted); margin-left: auto; }
+  .news-headline { font-size: 14px; font-weight: 500; margin: 0 0 4px; }
+  .news-body { font-size: 12.5px; color: var(--muted); line-height: 1.55; margin: 0; }
+
+  footer { max-width: 740px; margin: 0 auto; padding: 0 24px 40px; }
+  footer p { font-size: 11px; color: var(--muted); line-height: 1.6; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Komunitas Tools</h1>
+  <p>Beranda harian &mdash; ringkasan, notifikasi, arsip, dan catatan analisis pribadi</p>
+</header>
+
+<main>
+  <div class="digest">
+    <div class="digest-date">Kamis, 10 Juli 2026</div>
+    <p class="digest-title">Ringkasan pagi ini</p>
+    <div class="digest-stats">
+      <div class="digest-stat"><div class="num" id="stat-events">0</div><div class="lbl">event kalender relevan (7 hari ke depan)</div></div>
+      <div class="digest-stat"><div class="num" id="stat-disc">0</div><div class="lbl">pengumuman baru dari watchlist</div></div>
+      <div class="digest-stat"><div class="num" id="stat-media">0</div><div class="lbl">berita media relevan (3 hari terakhir)</div></div>
+      <div class="digest-stat"><div class="num" id="stat-streak">4</div><div class="lbl">hari streak belajar</div></div>
+    </div>
+    <div id="notif-list"></div>
+  </div>
+
+  <h3 style="margin-top: 0;">Ringkasan Berita</h3>
+  <p class="sub">Versi baca cepat dari kalender ekonomi, keterbukaan informasi, &amp; berita media di bawah &mdash; anggap ini sampul, detail lengkapnya tetap ada di bagian masing-masing.</p>
+  <div class="card" id="news-summary-card">
+    <div id="news-summary-list"></div>
+  </div>
+
+  <div class="card lesson-card">
+    <div class="lesson-icon">&#9679;</div>
+    <div class="lesson-body">
+      <p class="lesson-title" id="lesson-title"></p>
+      <p class="lesson-text" id="lesson-text"></p>
+      <p class="streak" id="lesson-streak-text"></p>
+    </div>
+    <button class="lesson-btn" id="lesson-btn">Tandai selesai</button>
+  </div>
+
+  <div class="explainer">
+    <button class="explainer-toggle" id="explainer-toggle">
+      <span>Apa itu analisis top-down &amp; bottom-up?</span>
+      <span class="icon">&#9660;</span>
+    </button>
+    <div class="explainer-body" id="explainer-body">
+      <p class="explainer-desc">Info di halaman ini adalah bahan referensi, bukan kesimpulan siap pakai. Tiap event,
+      pengumuman, dan berita media di bawah punya kolom <b>catatan analisis saya</b> supaya kesimpulannya tetap dari kamu sendiri,
+      bukan dari kami.</p>
+      <div class="funnel-compare">
+        <div class="funnel-col">
+          <div class="funnel-col-title" style="color:var(--brand-dark)">Top-down</div>
+          <div class="funnel-col-start">Titik awal</div>
+          <div class="funnel-box w1" style="background:#eff6ff; color:var(--brand-dark);"><div class="fb-title">Makro ekonomi</div><div class="fb-sub">Inflasi, suku bunga, kurs</div></div>
+          <div class="funnel-arrow-c">&darr;</div>
+          <div class="funnel-box w2" style="background:#eff6ff; color:var(--brand-dark);"><div class="fb-title">Sektor / industri</div><div class="fb-sub">Industri yang terdampak</div></div>
+          <div class="funnel-arrow-c">&darr;</div>
+          <div class="funnel-box w3" style="background:#eff6ff; color:var(--brand-dark);"><div class="fb-title">Emiten / saham</div><div class="fb-sub">Saham spesifik</div></div>
+          <div class="funnel-note">kian menyempit</div>
+        </div>
+        <div class="funnel-col">
+          <div class="funnel-col-title" style="color:#0f766e">Bottom-up</div>
+          <div class="funnel-col-start">Titik awal</div>
+          <div class="funnel-box w3" style="background:#f0fdfa; color:#0f766e;"><div class="fb-title">Emiten / saham</div><div class="fb-sub">Kinerja &amp; valuasi</div></div>
+          <div class="funnel-arrow-c">&darr;</div>
+          <div class="funnel-box w2" style="background:#f0fdfa; color:#0f766e;"><div class="fb-title">Sektor / industri</div><div class="fb-sub">Posisi di industri</div></div>
+          <div class="funnel-arrow-c">&darr;</div>
+          <div class="funnel-box w1" style="background:#f0fdfa; color:#0f766e;"><div class="fb-title">Makro ekonomi</div><div class="fb-sub">Konteks ekonomi luas</div></div>
+          <div class="funnel-note">kian meluas</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="font-weight:500; margin-bottom:10px;">Watchlist Kamu</div>
+    <div class="chips" id="chips"></div>
+    <div class="add-row">
+      <input type="text" id="add-input" placeholder="cth. BBCA atau perbankan" />
+      <button class="primary" id="add-btn">Tambah</button>
+    </div>
+    <div class="quick-sectors" id="quick-sectors"></div>
+    <p class="note-small">Notifikasi, badge, dan filter di bawah semuanya mengikuti watchlist ini.</p>
+  </div>
+
+  <div class="search-row">
+    <input type="search" id="search-input" placeholder="Cari di arsip kalender, keterbukaan informasi & berita media..." />
+  </div>
+
+  <h3>Kalender Ekonomi</h3>
+  <p class="sub">Termasuk arsip event yang sudah lewat. Event dengan badge hijau relevan dengan watchlist kamu.</p>
+  <div class="filters" id="filters"></div>
+  <div id="event-list"></div>
+
+  <h3>Keterbukaan Informasi Emiten</h3>
+  <p class="sub" id="disc-sub"></p>
+  <div id="disc-list"></div>
+
+  <h3>Berita Media (RSS)</h3>
+  <p class="sub" id="media-sub"></p>
+  <div id="media-list"></div>
+</main>
+
+<footer>
+  <p>Semua data (event, pengumuman, berita media, statistik ringkasan, streak) adalah <b>contoh/dummy</b> untuk keperluan
+  prototipe. Berita media diringkas otomatis dari sumber pihak ketiga <b>non-pemerintah</b> (media massa, bukan rilis resmi
+  BI/BPS/OJK/IDX) dan bisa mengandung kesalahan interpretasi mesin &mdash; selalu cek artikel aslinya. Catatan analisis
+  disimpan sementara di memori halaman ini saja (versi nyata akan tersimpan per akun). Konteks menjelaskan mekanisme umum,
+  bukan proyeksi harga. Semua kesimpulan analisis sepenuhnya milik dan tanggung jawab pengguna, bukan dari kami.</p>
+</footer>
+
+<script>
+const sectorEmiten = {
+  perbankan: { index: ["BBCA", "BBRI", "BMRI", "BBNI"], other: ["BJBR", "BJTM", "BTPS"] },
+  properti: { index: ["CTRA", "PWON"], other: ["BSDE", "SMRA"] },
+  energi: { index: ["PGAS", "PTBA", "ADRO"], other: ["MEDC", "ITMG"] },
+  "consumer goods": { index: ["ICBP", "UNVR"], other: ["INDF", "MYOR"] },
+  otomotif: { index: ["ASII"], other: ["AUTO", "IMAS"] },
+  infrastruktur: { index: ["JSMR"], other: ["WIKA", "WSKT"] },
+};
+const emitenToSector = {};
+Object.entries(sectorEmiten).forEach(([sector, data]) => [...data.index, ...data.other].forEach((c) => { emitenToSector[c] = sector; }));
+
+const events = [
+  { date: "2026-06-25", country: "ID", importance: "menengah", name: "Rilis Uang Beredar (M2) Mei 2026", source: "Bank Indonesia — Siaran Pers", sourceUrl: "https://www.bi.go.id/id/publikasi/ruang-media/news-release/default.aspx", prev: "-", forecast: "-", sectors: ["perbankan"], context: "Pertumbuhan uang beredar biasanya jadi indikator likuiditas sistem keuangan yang berkaitan dengan sektor perbankan.", newsSummary: "Bank Indonesia melaporkan pertumbuhan uang beredar dalam arti luas (M2) pada Mei 2026 tetap berada dalam tren yang terkendali, mencerminkan likuiditas sistem keuangan yang relatif stabil dibanding periode sebelumnya." },
+  { date: "2026-07-01", country: "ID", importance: "tinggi", name: "Rilis Inflasi (IHK) Juni 2026", source: "BPS — Berita Resmi Statistik (BRS)", sourceUrl: "https://webapi.bps.go.id/", prev: "2.8% yoy", forecast: "2.9% yoy", sectors: ["consumer goods"], context: "Data inflasi konsumen biasanya jadi acuan tekanan biaya bahan baku dan daya beli untuk sektor consumer goods.", newsSummary: "BPS mencatat inflasi bulanan sebesar 0,3% pada Juni 2026, sehingga inflasi tahunan naik menjadi 2,9%. Kenaikan ini terutama didorong oleh harga kelompok makanan, minuman, dan tembakau akibat faktor musiman." },
+  { date: "2026-07-05", country: "ID", importance: "menengah", name: "Neraca Dagang Juni 2026", source: "BPS — Berita Resmi Statistik (BRS)", sourceUrl: "https://webapi.bps.go.id/", prev: "Surplus USD 2.1 miliar", forecast: "Surplus USD 1.8 miliar", sectors: ["energi", "otomotif"], context: "Neraca dagang mencerminkan aktivitas ekspor-impor, relevan untuk sektor energi dan otomotif.", newsSummary: "Neraca perdagangan Indonesia mencatat surplus USD 1,8 miliar pada Juni 2026, melanjutkan tren surplus beberapa bulan terakhir yang didorong oleh ekspor komoditas." },
+  { date: "2026-07-16", country: "ID", importance: "tinggi", name: "RDG Bank Indonesia — Keputusan BI Rate", source: "Bank Indonesia — Siaran Pers", sourceUrl: "https://www.bi.go.id/id/publikasi/ruang-media/news-release/default.aspx", prev: "5.75%", forecast: "5.75% (tetap)", sectors: ["perbankan", "properti"], context: "Suku bunga acuan biasanya memengaruhi biaya dana perbankan dan cicilan KPR di sektor properti.", newsSummary: "Bank Indonesia memutuskan mempertahankan BI Rate di level 5,75% dalam Rapat Dewan Gubernur bulan ini, sejalan dengan ekspektasi pasar dan konsisten dengan arah kebijakan moneter yang pro-stabilitas." },
+  { date: "2026-07-18", country: "ID", importance: "menengah", name: "Statistik Sektor Jasa Keuangan Juni 2026", source: "OJK — Portal Data Sektor Jasa Keuangan", sourceUrl: "https://ojk.go.id/id/berita-dan-kegiatan/siaran-pers/default.aspx", prev: "-", forecast: "-", sectors: ["perbankan"], context: "Statistik kredit dan likuiditas sektor jasa keuangan jadi indikator kondisi operasional industri perbankan.", newsSummary: "OJK merilis data statistik kredit dan likuiditas sektor jasa keuangan periode Juni 2026 melalui portal data terintegrasi mereka, mencakup kondisi operasional industri perbankan." },
+  { date: "2026-07-21", country: "ID", importance: "tinggi", name: "Rilis PDB Kuartal II 2026", source: "BPS — Berita Resmi Statistik (BRS)", sourceUrl: "https://webapi.bps.go.id/", prev: "5.0% yoy", forecast: "5.1% yoy", sectors: ["infrastruktur", "consumer goods"], context: "Pertumbuhan PDB dikaitkan dengan belanja infrastruktur dan konsumsi domestik.", newsSummary: "BPS melaporkan pertumbuhan ekonomi kuartal II 2026 sebesar 5,1% secara tahunan, sedikit lebih tinggi dibanding kuartal sebelumnya, didorong konsumsi domestik dan belanja infrastruktur." },
+  { date: "2026-07-30", country: "US", importance: "tinggi", name: "FOMC Meeting — Keputusan Fed Rate", source: "Federal Reserve", sourceUrl: "https://www.federalreserve.gov/newsevents/pressreleases.htm", prev: "4.50%", forecast: "4.50% (tetap)", sectors: ["perbankan", "properti", "otomotif"], context: "Suku bunga acuan AS memengaruhi arus modal global dan nilai tukar rupiah.", newsSummary: "The Federal Reserve mempertahankan suku bunga acuan di level 4,50% dalam pertemuan FOMC bulan ini, sesuai konsensus pasar yang memperkirakan tidak ada perubahan kebijakan dalam waktu dekat." },
+  { date: "2026-08-01", country: "US", importance: "tinggi", name: "Non-Farm Payrolls (NFP) AS", source: "U.S. Bureau of Labor Statistics", sourceUrl: "https://www.bls.gov/schedule/news_release/", prev: "180 ribu", forecast: "175 ribu", sectors: ["energi", "otomotif"], context: "Data tenaga kerja AS memengaruhi ekspektasi kebijakan The Fed dan pergerakan dolar AS.", newsSummary: "Data Non-Farm Payrolls AS untuk periode berjalan diperkirakan mencatat penambahan sekitar 175 ribu lapangan kerja, sedikit lebih rendah dibanding bulan sebelumnya." },
+];
+
+const disclosures = [
+  { emiten: "BBCA", type: "Dividen", date: "2026-07-09", title: "Pengumuman pembagian dividen tunai tahun buku 2025", summary: "Jadwal cum date, ex date, dan tanggal pembayaran dividen tunai sesuai keputusan RUPS Tahunan.", url: "https://www.idx.co.id/id/perusahaan-tercatat/keterbukaan-informasi" },
+  { emiten: "ASII", type: "RUPS", date: "2026-07-05", title: "Panggilan Rapat Umum Pemegang Saham Tahunan 2026", summary: "Panggilan RUPS Tahunan beserta mata acara rapat kepada pemegang saham.", url: "https://www.idx.co.id/id/perusahaan-tercatat/keterbukaan-informasi" },
+  { emiten: "UNVR", type: "Laporan", date: "2026-07-03", title: "Publikasi laporan keuangan interim kuartal II 2026", summary: "Laporan keuangan interim yang belum diaudit untuk periode enam bulan pertama 2026.", url: "https://www.idx.co.id/id/perusahaan-tercatat/keterbukaan-informasi" },
+  { emiten: "JSMR", type: "Korporasi", date: "2026-07-02", title: "Rencana penerbitan obligasi berkelanjutan tahap berikutnya", summary: "Rencana aksi korporasi penerbitan obligasi untuk mendukung pendanaan proyek.", url: "https://www.idx.co.id/id/perusahaan-tercatat/keterbukaan-informasi" },
+  { emiten: "BBRI", type: "Manajemen", date: "2026-06-30", title: "Perubahan susunan Direksi dan Dewan Komisaris", summary: "Perubahan susunan pengurus sesuai hasil RUPS.", url: "https://www.idx.co.id/id/perusahaan-tercatat/keterbukaan-informasi" },
+  { emiten: "CTRA", type: "Korporasi", date: "2026-06-28", title: "Keterbukaan informasi rencana penambahan modal (rights issue)", summary: "Rencana penambahan modal dengan hak memesan efek terlebih dahulu.", url: "https://www.idx.co.id/id/perusahaan-tercatat/keterbukaan-informasi" },
+  { emiten: "PTBA", type: "Laporan", date: "2026-06-25", title: "Laporan produksi dan penjualan bulanan Juni 2026", summary: "Data produksi dan penjualan batu bara sesuai kewajiban pelaporan bulanan.", url: "https://www.idx.co.id/id/perusahaan-tercatat/keterbukaan-informasi" },
+  { emiten: "ICBP", type: "RUPS", date: "2026-06-20", title: "Panggilan Rapat Umum Pemegang Saham Luar Biasa", summary: "Panggilan RUPSLB terkait perubahan anggaran dasar.", url: "https://www.idx.co.id/id/perusahaan-tercatat/keterbukaan-informasi" },
+];
+
+// Berita media (non-pemerintah): hasil resume otomatis dari RSS media massa, sebagai tambahan di luar
+// kalender resmi (BI/BPS/OJK/Fed) dan keterbukaan informasi IDX di atas. Nilai awal di bawah dipakai
+// sebagai fallback kalau terminal/data/media-news.json gagal dimuat (mis. dibuka langsung dari disk).
+// Di produksi, file JSON itu yang ditimpa tiap hari oleh scripts/fetch-news.mjs lewat GitHub Actions.
+const MEDIA_DATA_URL = "data/media-news.json";
+let mediaNews = [
+  { date: "2026-07-09", source: "Kontan", sourceUrl: "https://www.kontan.co.id/", headline: "IHSG Ditutup Menguat Ditopang Sektor Perbankan", body: "IHSG naik 0,7% ke level 7.850, didorong penguatan saham-saham bank besar BBCA dan BBRI. Asing tercatat net buy Rp420 miliar di pasar reguler.", sectors: ["perbankan"] },
+  { date: "2026-07-08", source: "CNBC Indonesia", sourceUrl: "https://www.cnbcindonesia.com/", headline: "Harga Batu Bara Global Naik Tipis, Emiten Tambang Diuntungkan", body: "Harga batu bara acuan naik 1,2% seiring permintaan musim dingin di Asia Timur; saham-saham emiten tambang batu bara seperti PTBA dan ADRO ikut terangkat.", sectors: ["energi"] },
+  { date: "2026-07-08", source: "Bisnis.com", sourceUrl: "https://www.bisnis.com/", headline: "Penjualan Mobil Nasional Juni Tumbuh 4% YoY", body: "Data Gaikindo menunjukkan penjualan mobil domestik tumbuh, didorong permintaan kendaraan niaga; ASII jadi salah satu penerima manfaat utama.", sectors: ["otomotif"] },
+  { date: "2026-07-07", source: "Katadata", sourceUrl: "https://katadata.co.id/", headline: "OJK Diperkirakan Perketat Transparansi Biaya Produk Investasi Digital", body: "Sejumlah pelaku industri menanggapi rencana aturan baru yang mewajibkan platform investasi digital mengungkap seluruh komponen biaya secara eksplisit kepada nasabah ritel.", sectors: ["perbankan"] },
+  { date: "2026-07-06", source: "Liputan6", sourceUrl: "https://www.liputan6.com/bisnis/", headline: "Harga Bahan Bangunan Naik, Emiten Properti Waspadai Daya Beli", body: "Kenaikan harga bahan bangunan mendorong penyesuaian harga rumah subsidi; analis menyoroti dampaknya ke margin emiten properti seperti CTRA dan BSDE.", sectors: ["properti"] },
+];
+
+const lessons = [
+  { title: "Apa itu top-down analysis?", text: "Analisis yang dimulai dari kondisi makro ekonomi, lalu menyempit ke sektor, baru ke saham tertentu." },
+  { title: "Apa itu bottom-up analysis?", text: "Analisis yang dimulai dari fundamental satu perusahaan, baru dilihat konteks industri dan makronya." },
+  { title: "Membaca Berita Resmi Statistik (BRS)", text: "BRS adalah cara BPS merilis data ekonomi resmi pada jadwal tetap tiap bulan." },
+  { title: "Apa itu keterbukaan informasi?", text: "Kewajiban emiten mengumumkan aksi korporasi, dividen, dan perubahan penting ke publik lewat IDX." },
+  { title: "Kenapa diversifikasi sektor penting?", text: "Menyebar risiko supaya tidak semua holding bereaksi sama terhadap satu jenis berita makro." },
+];
+
+const today = new Date("2026-07-10");
+const monthNames = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+let activeFilter = "semua";
+let watchlist = [];
+let searchQuery = "";
+let notes = {};
+let lessonDone = false;
+let streak = 4;
+
+function normalize(v) { return v.trim().toUpperCase(); }
+function resolveEntry(raw) {
+  const v = normalize(raw);
+  if (emitenToSector[v]) return { type: "emiten", value: v, sector: emitenToSector[v] };
+  const sectorKey = Object.keys(sectorEmiten).find((s) => s.toUpperCase() === v);
+  if (sectorKey) return { type: "sector", value: sectorKey, sector: sectorKey };
+  return null;
+}
+function watchedSectors() { return new Set(watchlist.map((w) => w.sector)); }
+function watchedEmitenCodes() {
+  const codes = new Set();
+  watchlist.forEach((item) => {
+    if (item.type === "emiten") codes.add(item.value);
+    else if (item.type === "sector") { const d = sectorEmiten[item.sector]; if (d) [...d.index, ...d.other].forEach((c) => codes.add(c)); }
+  });
+  return codes;
+}
+
+function renderChips() {
+  const chips = document.getElementById("chips");
+  chips.innerHTML = watchlist.length === 0 ? '<span style="font-size:13px; color: var(--muted);">Belum ada item di watchlist.</span>' : "";
+  watchlist.forEach((item, i) => {
+    const chip = document.createElement("span");
+    chip.className = "chip";
+    const label = item.type === "emiten" ? item.value + " (" + item.sector + ")" : item.value;
+    chip.innerHTML = `${label} <button data-remove="${i}" aria-label="Hapus">&times;</button>`;
+    chips.appendChild(chip);
+  });
+  chips.querySelectorAll("[data-remove]").forEach((btn) => btn.addEventListener("click", (e) => {
+    watchlist.splice(Number(e.currentTarget.dataset.remove), 1);
+    renderChips(); renderEvents(); renderDisclosures(); renderMediaNews(); renderDigest(); renderNewsSummary();
+  }));
+}
+function renderQuickSectors() {
+  const c = document.getElementById("quick-sectors");
+  c.innerHTML = "";
+  Object.keys(sectorEmiten).forEach((s) => {
+    const el = document.createElement("span");
+    el.textContent = s;
+    el.addEventListener("click", () => addToWatchlist(s));
+    c.appendChild(el);
+  });
+}
+function addToWatchlist(raw) {
+  const r = resolveEntry(raw);
+  if (!r || watchlist.some((w) => w.value === r.value)) return;
+  watchlist.push(r); renderChips(); renderEvents(); renderDisclosures(); renderMediaNews(); renderDigest(); renderNewsSummary();
+}
+
+function renderFilters() {
+  const el = document.getElementById("filters");
+  const opts = [{ key: "semua", label: "Semua" }, { key: "ID", label: "Indonesia" }, { key: "US", label: "Global" }];
+  el.innerHTML = opts.map(o => `<button data-key="${o.key}" class="${activeFilter === o.key ? 'active' : ''}">${o.label}</button>`).join("");
+  el.querySelectorAll("button").forEach(btn => btn.addEventListener("click", (e) => { activeFilter = e.currentTarget.dataset.key; renderFilters(); renderEvents(); }));
+}
+
+function emitenChunk(codes) { return codes.map(c => `<span class="emiten-chip">${c}</span>`).join(""); }
+
+function noteKey(prefix, id) { return prefix + "-" + id; }
+
+function notePanelHtml(key) {
+  const val = notes[key] || "";
+  return `
+    <button class="note-toggle" data-note-toggle="${key}">Catatan analisis saya</button>
+    <div class="note-panel" id="note-panel-${key}">
+      <textarea placeholder="Tuliskan analisis top-down atau bottom-up versi kamu di sini..." data-note-input="${key}">${val}</textarea>
+      <div style="display:flex; align-items:center; gap:10px; margin-top:8px;">
+        <button class="funnel-toggle" data-note-save="${key}">Simpan catatan</button>
+        <span class="saved" id="note-saved-${key}">Tersimpan.</span>
+      </div>
+    </div>
+  `;
+}
+
+function wireNotePanel(key) {
+  const toggleBtn = document.querySelector(`[data-note-toggle="${key}"]`);
+  if (toggleBtn) toggleBtn.addEventListener("click", () => {
+    document.getElementById("note-panel-" + key).classList.toggle("open");
+  });
+  const saveBtn = document.querySelector(`[data-note-save="${key}"]`);
+  if (saveBtn) saveBtn.addEventListener("click", () => {
+    const input = document.querySelector(`[data-note-input="${key}"]`);
+    notes[key] = input.value;
+    const saved = document.getElementById("note-saved-" + key);
+    saved.classList.add("show");
+    setTimeout(() => saved.classList.remove("show"), 1800);
+  });
+}
+
+function renderEvents() {
+  const list = document.getElementById("event-list");
+  let filtered = activeFilter === "semua" ? events : events.filter(e => e.country === activeFilter);
+  if (searchQuery) filtered = filtered.filter(e => e.name.toLowerCase().includes(searchQuery));
+  const sorted = [...filtered].sort((a, b) => new Date(a.date) - new Date(b.date));
+  const sectors = watchedSectors();
+
+  list.innerHTML = sorted.map((ev, i) => {
+    const d = new Date(ev.date);
+    const isPast = d < today;
+    const isMatch = ev.sectors.some(s => sectors.has(s));
+    const key = noteKey("event", ev.date + "-" + ev.name.slice(0, 10));
+    const sectorPills = ev.sectors.map(s => `<span class="sector-pill">${s}</span>`).join("");
+    const emitenBlocks = ev.sectors.map(s => {
+      const data = sectorEmiten[s]; if (!data) return "";
+      return `<div class="emiten-group"><div class="emiten-group-label">${s} &mdash; konstituen indeks resmi</div><div class="emiten-chips">${emitenChunk(data.index)}</div><button class="expand-btn" data-sector="${s}-${i}">+ tampilkan emiten lain</button><div class="emiten-chips" id="other-${s}-${i}" style="display:none; margin-top:6px;">${emitenChunk(data.other)}</div></div>`;
+    }).join("");
+
+    return `
+      <div class="event-card">
+        <div class="event-top">
+          <div class="date-block"><div class="day">${d.getDate()}</div><div class="mon">${monthNames[d.getMonth()]}</div></div>
+          <div class="event-main">
+            <div class="event-title-row">
+              <span class="flag">${ev.country}</span>
+              <span class="importance ${ev.importance}">${ev.importance}</span>
+              <span class="status">${isPast ? "sudah rilis" : "akan datang"}</span>
+              ${isMatch ? '<span class="match-badge">cocok watchlist</span>' : ''}
+            </div>
+            <p class="event-name">${ev.name}</p>
+            <p class="source-line">Sumber: <a href="${ev.sourceUrl}" target="_blank" rel="noopener">${ev.source}</a></p>
+            <div class="figures"><span>Sebelumnya: <b>${ev.prev}</b></span><span>Konsensus: <b>${ev.forecast}</b></span></div>
+            <div class="btn-row">
+              <button class="funnel-toggle" data-idx="${i}">Lihat sektor &amp; emiten terkait</button>
+              ${notePanelHtml(key)}
+            </div>
+            <div class="funnel" id="funnel-${i}">
+              <div class="funnel-step"><div class="label">Sektor terdampak</div><div class="sector-list">${sectorPills}</div></div>
+              <div class="funnel-arrow">&darr;</div>
+              <div class="funnel-step"><div class="label">Emiten terkait</div>${emitenBlocks}</div>
+              <p class="context">${ev.context}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  list.querySelectorAll(".funnel-toggle[data-idx]").forEach(btn => btn.addEventListener("click", (e) => document.getElementById("funnel-" + e.currentTarget.dataset.idx).classList.toggle("open")));
+  list.querySelectorAll(".expand-btn").forEach(btn => btn.addEventListener("click", (e) => { const o = document.getElementById("other-" + e.currentTarget.dataset.sector); o.style.display = o.style.display === "none" ? "flex" : "none"; }));
+  sorted.forEach((ev) => wireNotePanel(noteKey("event", ev.date + "-" + ev.name.slice(0, 10))));
+}
+
+function renderDisclosures() {
+  const list = document.getElementById("disc-list");
+  const sub = document.getElementById("disc-sub");
+  const codes = watchedEmitenCodes();
+
+  if (codes.size === 0) {
+    sub.textContent = "Tambahkan emiten atau sektor di watchlist untuk melihat pengumuman resmi.";
+    list.innerHTML = '<div class="empty-state">Watchlist masih kosong. Tidak ada pengumuman default yang ditampilkan.</div>';
+    return;
+  }
+  let filtered = disclosures.filter((d) => codes.has(d.emiten));
+  if (searchQuery) filtered = filtered.filter(d => d.title.toLowerCase().includes(searchQuery) || d.emiten.toLowerCase().includes(searchQuery));
+  sub.textContent = `${filtered.length} pengumuman dari ${codes.size} emiten di watchlist kamu.`;
+
+  if (filtered.length === 0) { list.innerHTML = '<div class="empty-state">Tidak ada pengumuman yang cocok.</div>'; return; }
+  const sorted = [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  list.innerHTML = sorted.map((d) => {
+    const key = noteKey("disc", d.emiten + "-" + d.date);
+    return `
+      <div class="disc-item">
+        <div class="disc-top">
+          <span class="disc-emiten">${d.emiten}</span>
+          <span class="disc-type ${d.type}">${d.type}</span>
+          <span class="disc-date">${d.date}</span>
+        </div>
+        <p class="disc-title">${d.title}</p>
+        <p class="disc-summary">${d.summary}</p>
+        <div class="btn-row">
+          <a class="disc-link" href="${d.url}" target="_blank" rel="noopener">Lihat dokumen resmi di IDX</a>
+          ${notePanelHtml(key)}
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  sorted.forEach((d) => wireNotePanel(noteKey("disc", d.emiten + "-" + d.date)));
+}
+
+function renderMediaNews() {
+  const list = document.getElementById("media-list");
+  const sub = document.getElementById("media-sub");
+  const sectors = watchedSectors();
+
+  let filtered = mediaNews;
+  if (searchQuery) filtered = filtered.filter(m => m.headline.toLowerCase().includes(searchQuery) || m.source.toLowerCase().includes(searchQuery));
+  sub.textContent = `${filtered.length} artikel diringkas otomatis dari media, di luar sumber resmi pemerintah & IDX di atas. Selalu verifikasi ke artikel asli.`;
+
+  if (filtered.length === 0) { list.innerHTML = '<div class="empty-state">Tidak ada artikel yang cocok.</div>'; return; }
+  const sorted = [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  list.innerHTML = sorted.map((m) => {
+    const key = noteKey("media", m.source + "-" + m.date + "-" + m.headline.slice(0, 10));
+    const isMatch = m.sectors.some(s => sectors.has(s));
+    return `
+      <div class="disc-item">
+        <div class="disc-top">
+          <span class="disc-emiten">${m.source}</span>
+          <span class="disc-type Media">Media</span>
+          ${isMatch ? '<span class="match-badge">cocok watchlist</span>' : ''}
+          <span class="disc-date">${m.date}</span>
+        </div>
+        <p class="disc-title">${m.headline}</p>
+        <p class="disc-summary">${m.body}</p>
+        <div class="btn-row">
+          <a class="disc-link" href="${m.sourceUrl}" target="_blank" rel="noopener">Baca artikel asli</a>
+          ${notePanelHtml(key)}
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  sorted.forEach((m) => wireNotePanel(noteKey("media", m.source + "-" + m.date + "-" + m.headline.slice(0, 10))));
+}
+
+function renderDigest() {
+  const sectors = watchedSectors();
+  const codes = watchedEmitenCodes();
+  const in7days = events.filter(e => {
+    const d = new Date(e.date);
+    const diff = (d - today) / (1000 * 60 * 60 * 24);
+    return diff >= 0 && diff <= 7 && e.sectors.some(s => sectors.has(s));
+  });
+  const newDisc = disclosures.filter(d => {
+    const dd = new Date(d.date);
+    const diff = (today - dd) / (1000 * 60 * 60 * 24);
+    return diff >= 0 && diff <= 7 && codes.has(d.emiten);
+  });
+  const recentMedia = mediaNews.filter(m => {
+    const md = new Date(m.date);
+    const diff = (today - md) / (1000 * 60 * 60 * 24);
+    return diff >= 0 && diff <= 3 && m.sectors.some(s => sectors.has(s));
+  });
+
+  document.getElementById("stat-events").textContent = in7days.length;
+  document.getElementById("stat-disc").textContent = newDisc.length;
+  document.getElementById("stat-media").textContent = recentMedia.length;
+  document.getElementById("stat-streak").textContent = streak;
+
+  const notifItems = [
+    ...in7days.map(e => ({ type: "event", date: e.date, text: e.name })),
+    ...newDisc.map(d => ({ type: "disc", date: d.date, text: `${d.emiten}: ${d.title}` })),
+    ...recentMedia.map(m => ({ type: "media", date: m.date, text: `${m.source}: ${m.headline}` })),
+  ].sort((a, b) => new Date(a.date) - new Date(b.date)).slice(0, 4);
+
+  const notifList = document.getElementById("notif-list");
+  notifList.innerHTML = notifItems.length === 0
+    ? '<div class="notif-item"><span class="dot" style="background:var(--muted);"></span><span class="txt" style="color:var(--muted);">Belum ada notifikasi untuk watchlist kamu.</span></div>'
+    : notifItems.map(n => `<div class="notif-item"><span class="dot"></span><span class="txt">${n.text}</span><span class="when">${n.date}</span></div>`).join("");
+}
+
+function renderNewsSummary() {
+  const list = document.getElementById("news-summary-list");
+  const sectors = watchedSectors();
+  const codes = watchedEmitenCodes();
+
+  const eventItems = events.map(e => ({
+    kind: "kalender", date: e.date, headline: e.name, body: e.newsSummary,
+    sourceUrl: e.sourceUrl, sourceName: e.source, isMatch: e.sectors.some(s => sectors.has(s)),
+  }));
+  const discItems = disclosures.map(d => ({
+    kind: "keterbukaan", date: d.date, headline: `${d.emiten}: ${d.title}`, body: d.summary,
+    sourceUrl: d.url, sourceName: "IDX — Keterbukaan Informasi", isMatch: codes.has(d.emiten),
+  }));
+  const mediaItems = mediaNews.map(m => ({
+    kind: "media", date: m.date, headline: m.headline, body: m.body,
+    sourceUrl: m.sourceUrl, sourceName: m.source, isMatch: m.sectors.some(s => sectors.has(s)),
+  }));
+
+  let combined = [...eventItems, ...discItems, ...mediaItems];
+  const matched = combined.filter(i => i.isMatch).sort((a, b) => new Date(b.date) - new Date(a.date));
+  const rest = combined.filter(i => !i.isMatch).sort((a, b) => new Date(b.date) - new Date(a.date));
+  const shown = [...matched, ...rest].slice(0, 6);
+
+  const tagLabel = { kalender: "Kalender", keterbukaan: "Keterbukaan", media: "Media" };
+
+  list.innerHTML = shown.map(item => `
+    <div class="news-item">
+      <div class="news-top">
+        <span class="news-tag ${item.kind}">${tagLabel[item.kind]}</span>
+        ${item.isMatch ? '<span class="match-badge">cocok watchlist</span>' : ''}
+        <span class="news-date">${item.date}</span>
+      </div>
+      <p class="news-headline">${item.headline}</p>
+      <p class="news-body">${item.body}</p>
+    </div>
+  `).join("");
+}
+
+function renderLesson() {
+  const dayIndex = today.getDate() % lessons.length;
+  const lesson = lessons[dayIndex];
+  document.getElementById("lesson-title").textContent = lesson.title;
+  document.getElementById("lesson-text").textContent = lesson.text;
+  document.getElementById("lesson-streak-text").textContent = lessonDone ? `Sudah dibaca hari ini · streak ${streak} hari` : `Streak saat ini: ${streak} hari`;
+  const btn = document.getElementById("lesson-btn");
+  btn.textContent = lessonDone ? "Selesai hari ini" : "Tandai selesai";
+  btn.classList.toggle("done", lessonDone);
+}
+
+document.getElementById("lesson-btn").addEventListener("click", () => {
+  if (lessonDone) return;
+  lessonDone = true;
+  streak += 1;
+  renderLesson();
+  renderDigest();
+});
+
+document.getElementById("add-btn").addEventListener("click", () => {
+  const input = document.getElementById("add-input");
+  if (input.value.trim()) { addToWatchlist(input.value); input.value = ""; }
+});
+document.getElementById("add-input").addEventListener("keydown", (e) => { if (e.key === "Enter") document.getElementById("add-btn").click(); });
+
+document.getElementById("search-input").addEventListener("input", (e) => {
+  searchQuery = e.target.value.trim().toLowerCase();
+  renderEvents();
+  renderDisclosures();
+  renderMediaNews();
+});
+
+document.getElementById("explainer-toggle").addEventListener("click", (e) => {
+  document.getElementById("explainer-body").classList.toggle("open");
+  e.currentTarget.classList.toggle("open");
+});
+
+async function loadMediaNews() {
+  try {
+    const res = await fetch(MEDIA_DATA_URL, { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    if (Array.isArray(data.items) && data.items.length) mediaNews = data.items;
+  } catch (err) {
+    console.warn("Gagal memuat berita media terbaru, pakai data contoh:", err);
+  }
+}
+
+(async () => {
+  await loadMediaNews();
+  renderQuickSectors();
+  renderChips();
+  renderFilters();
+  renderEvents();
+  renderDisclosures();
+  renderMediaNews();
+  renderDigest();
+  renderNewsSummary();
+  renderLesson();
+})();
+</script>
+</body>
+</html>

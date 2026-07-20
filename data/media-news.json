@@ -1,0 +1,10 @@
+{
+  "updated_at": "2026-07-10T06:00:00.000Z",
+  "items": [
+    { "date": "2026-07-09", "source": "Kontan", "sourceUrl": "https://www.kontan.co.id/", "headline": "IHSG Ditutup Menguat Ditopang Sektor Perbankan", "body": "IHSG naik 0,7% ke level 7.850, didorong penguatan saham-saham bank besar BBCA dan BBRI. Asing tercatat net buy Rp420 miliar di pasar reguler.", "sectors": ["perbankan"] },
+    { "date": "2026-07-08", "source": "CNBC Indonesia", "sourceUrl": "https://www.cnbcindonesia.com/", "headline": "Harga Batu Bara Global Naik Tipis, Emiten Tambang Diuntungkan", "body": "Harga batu bara acuan naik 1,2% seiring permintaan musim dingin di Asia Timur; saham-saham emiten tambang batu bara seperti PTBA dan ADRO ikut terangkat.", "sectors": ["energi"] },
+    { "date": "2026-07-08", "source": "Bisnis.com", "sourceUrl": "https://www.bisnis.com/", "headline": "Penjualan Mobil Nasional Juni Tumbuh 4% YoY", "body": "Data Gaikindo menunjukkan penjualan mobil domestik tumbuh, didorong permintaan kendaraan niaga; ASII jadi salah satu penerima manfaat utama.", "sectors": ["otomotif"] },
+    { "date": "2026-07-07", "source": "Katadata", "sourceUrl": "https://katadata.co.id/", "headline": "OJK Diperkirakan Perketat Transparansi Biaya Produk Investasi Digital", "body": "Sejumlah pelaku industri menanggapi rencana aturan baru yang mewajibkan platform investasi digital mengungkap seluruh komponen biaya secara eksplisit kepada nasabah ritel.", "sectors": ["perbankan"] },
+    { "date": "2026-07-06", "source": "Liputan6", "sourceUrl": "https://www.liputan6.com/bisnis/", "headline": "Harga Bahan Bangunan Naik, Emiten Properti Waspadai Daya Beli", "body": "Kenaikan harga bahan bangunan mendorong penyesuaian harga rumah subsidi; analis menyoroti dampaknya ke margin emiten properti seperti CTRA dan BSDE.", "sectors": ["properti"] }
+  ]
+}
