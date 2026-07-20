@@ -368,11 +368,11 @@ const disclosures = [
 // Di produksi, file JSON itu yang ditimpa tiap hari oleh scripts/fetch-news.mjs lewat GitHub Actions.
 const MEDIA_DATA_URL = "data/media-news.json";
 let mediaNews = [
-  { date: "2026-07-09", source: "Kontan", sourceUrl: "https://www.kontan.co.id/", headline: "IHSG Ditutup Menguat Ditopang Sektor Perbankan", body: "IHSG naik 0,7% ke level 7.850, didorong penguatan saham-saham bank besar BBCA dan BBRI. Asing tercatat net buy Rp420 miliar di pasar reguler.", sectors: ["perbankan"] },
-  { date: "2026-07-08", source: "CNBC Indonesia", sourceUrl: "https://www.cnbcindonesia.com/", headline: "Harga Batu Bara Global Naik Tipis, Emiten Tambang Diuntungkan", body: "Harga batu bara acuan naik 1,2% seiring permintaan musim dingin di Asia Timur; saham-saham emiten tambang batu bara seperti PTBA dan ADRO ikut terangkat.", sectors: ["energi"] },
-  { date: "2026-07-08", source: "Bisnis.com", sourceUrl: "https://www.bisnis.com/", headline: "Penjualan Mobil Nasional Juni Tumbuh 4% YoY", body: "Data Gaikindo menunjukkan penjualan mobil domestik tumbuh, didorong permintaan kendaraan niaga; ASII jadi salah satu penerima manfaat utama.", sectors: ["otomotif"] },
-  { date: "2026-07-07", source: "Katadata", sourceUrl: "https://katadata.co.id/", headline: "OJK Diperkirakan Perketat Transparansi Biaya Produk Investasi Digital", body: "Sejumlah pelaku industri menanggapi rencana aturan baru yang mewajibkan platform investasi digital mengungkap seluruh komponen biaya secara eksplisit kepada nasabah ritel.", sectors: ["perbankan"] },
-  { date: "2026-07-06", source: "Liputan6", sourceUrl: "https://www.liputan6.com/bisnis/", headline: "Harga Bahan Bangunan Naik, Emiten Properti Waspadai Daya Beli", body: "Kenaikan harga bahan bangunan mendorong penyesuaian harga rumah subsidi; analis menyoroti dampaknya ke margin emiten properti seperti CTRA dan BSDE.", sectors: ["properti"] },
+  { date: "2026-07-09", source: "Kontan", sourceUrl: "https://www.kontan.co.id/", headline: "IHSG Ditutup Menguat Ditopang Sektor Perbankan", body: "IHSG naik 0,7% ke level 7.850, didorong penguatan saham-saham bank besar BBCA dan BBRI. Asing tercatat net buy Rp420 miliar di pasar reguler.", sectors: ["perbankan"], emiten: ["BBCA", "BBRI"] },
+  { date: "2026-07-08", source: "CNBC Indonesia", sourceUrl: "https://www.cnbcindonesia.com/", headline: "Harga Batu Bara Global Naik Tipis, Emiten Tambang Diuntungkan", body: "Harga batu bara acuan naik 1,2% seiring permintaan musim dingin di Asia Timur; saham-saham emiten tambang batu bara seperti PTBA dan ADRO ikut terangkat.", sectors: ["energi"], emiten: ["PTBA", "ADRO"] },
+  { date: "2026-07-08", source: "Bisnis.com", sourceUrl: "https://www.bisnis.com/", headline: "Penjualan Mobil Nasional Juni Tumbuh 4% YoY", body: "Data Gaikindo menunjukkan penjualan mobil domestik tumbuh, didorong permintaan kendaraan niaga; ASII jadi salah satu penerima manfaat utama.", sectors: ["otomotif"], emiten: ["ASII"] },
+  { date: "2026-07-07", source: "Katadata", sourceUrl: "https://katadata.co.id/", headline: "OJK Diperkirakan Perketat Transparansi Biaya Produk Investasi Digital", body: "Sejumlah pelaku industri menanggapi rencana aturan baru yang mewajibkan platform investasi digital mengungkap seluruh komponen biaya secara eksplisit kepada nasabah ritel.", sectors: ["perbankan"], emiten: [] },
+  { date: "2026-07-06", source: "Liputan6", sourceUrl: "https://www.liputan6.com/bisnis/", headline: "Harga Bahan Bangunan Naik, Emiten Properti Waspadai Daya Beli", body: "Kenaikan harga bahan bangunan mendorong penyesuaian harga rumah subsidi; analis menyoroti dampaknya ke margin emiten properti seperti CTRA dan BSDE.", sectors: ["properti"], emiten: ["CTRA", "BSDE"] },
 ];
 
 const lessons = [
@@ -577,9 +577,16 @@ function renderMediaNews() {
   const list = document.getElementById("media-list");
   const sub = document.getElementById("media-sub");
   const sectors = watchedSectors();
+  const codes = watchedEmitenCodes();
 
   let filtered = mediaNews;
-  if (searchQuery) filtered = filtered.filter(m => m.headline.toLowerCase().includes(searchQuery) || m.source.toLowerCase().includes(searchQuery));
+  if (searchQuery) {
+    filtered = filtered.filter(m =>
+      m.headline.toLowerCase().includes(searchQuery) ||
+      m.source.toLowerCase().includes(searchQuery) ||
+      (m.emiten || []).some(c => c.toLowerCase().includes(searchQuery))
+    );
+  }
   sub.textContent = `${filtered.length} artikel diringkas otomatis dari media, di luar sumber resmi pemerintah & IDX di atas. Selalu verifikasi ke artikel asli.`;
 
   if (filtered.length === 0) { list.innerHTML = '<div class="empty-state">Tidak ada artikel yang cocok.</div>'; return; }
@@ -587,7 +594,8 @@ function renderMediaNews() {
 
   list.innerHTML = sorted.map((m) => {
     const key = noteKey("media", m.source + "-" + m.date + "-" + m.headline.slice(0, 10));
-    const isMatch = m.sectors.some(s => sectors.has(s));
+    const emiten = m.emiten || [];
+    const isMatch = m.sectors.some(s => sectors.has(s)) || emiten.some(c => codes.has(c));
     return `
       <div class="disc-item">
         <div class="disc-top">
@@ -598,6 +606,7 @@ function renderMediaNews() {
         </div>
         <p class="disc-title">${m.headline}</p>
         <p class="disc-summary">${m.body}</p>
+        ${emiten.length ? `<div class="emiten-chips" style="margin-bottom:10px;">${emitenChunk(emiten)}</div>` : ""}
         <div class="btn-row">
           <a class="disc-link" href="${m.sourceUrl}" target="_blank" rel="noopener">Baca artikel asli</a>
           ${notePanelHtml(key)}
@@ -625,7 +634,7 @@ function renderDigest() {
   const recentMedia = mediaNews.filter(m => {
     const md = new Date(m.date);
     const diff = (today - md) / (1000 * 60 * 60 * 24);
-    return diff >= 0 && diff <= 3 && m.sectors.some(s => sectors.has(s));
+    return diff >= 0 && diff <= 3 && (m.sectors.some(s => sectors.has(s)) || (m.emiten || []).some(c => codes.has(c)));
   });
 
   document.getElementById("stat-events").textContent = in7days.length;
@@ -660,7 +669,8 @@ function renderNewsSummary() {
   }));
   const mediaItems = mediaNews.map(m => ({
     kind: "media", date: m.date, headline: m.headline, body: m.body,
-    sourceUrl: m.sourceUrl, sourceName: m.source, isMatch: m.sectors.some(s => sectors.has(s)),
+    sourceUrl: m.sourceUrl, sourceName: m.source,
+    isMatch: m.sectors.some(s => sectors.has(s)) || (m.emiten || []).some(c => codes.has(c)),
   }));
 
   let combined = [...eventItems, ...discItems, ...mediaItems];

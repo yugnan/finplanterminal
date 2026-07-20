@@ -24,7 +24,7 @@ const SOURCES = [
   { name: "Liputan6 Bisnis", url: "https://www.liputan6.com/bisnis/rss" },
 ];
 
-// Sinkron manual dengan `sectorEmiten` di terminal/index.html.
+// Sinkron manual dengan `sectorEmiten` di index.html.
 const SECTOR_KEYWORDS = {
   perbankan: ["bank", "perbankan", "kredit", "kpr", "bunga acuan", "bi rate", "bbca", "bbri", "bmri", "bbni", "ojk"],
   properti: ["properti", "rumah", "apartemen", "ctra", "pwon", "bsde", "smra"],
@@ -33,6 +33,18 @@ const SECTOR_KEYWORDS = {
   otomotif: ["mobil", "otomotif", "kendaraan", "gaikindo", "asii", "auto", "imas"],
   infrastruktur: ["infrastruktur", "tol", "konstruksi", "jsmr", "wika", "wskt"],
 };
+
+// Sinkron manual dengan seluruh kode di `sectorEmiten` (index+other) di index.html.
+// Dipakai untuk mendeteksi kode saham spesifik yang disebut di judul/cuplikan berita,
+// terpisah dari deteksi sektor yang lebih umum di atas.
+const EMITEN_CODES = [
+  "BBCA", "BBRI", "BMRI", "BBNI", "BJBR", "BJTM", "BTPS",
+  "CTRA", "PWON", "BSDE", "SMRA",
+  "PGAS", "PTBA", "ADRO", "MEDC", "ITMG",
+  "ICBP", "UNVR", "INDF", "MYOR",
+  "ASII", "AUTO", "IMAS",
+  "JSMR", "WIKA", "WSKT",
+];
 
 const FRESHNESS_HOURS = 48; // hanya ambil artikel dalam N jam terakhir
 const MAX_PER_SOURCE = 6;
@@ -60,6 +72,10 @@ function detectSectors(text) {
     if (matched) hits.push(sector);
   }
   return hits;
+}
+
+function detectEmiten(text) {
+  return EMITEN_CODES.filter((code) => new RegExp(`\\b${code}\\b`, "i").test(text));
 }
 
 function fallbackBody(snippet, title) {
@@ -148,6 +164,7 @@ async function main() {
           headline: title,
           body,
           sectors: detectSectors(`${title} ${snippet}`),
+          emiten: detectEmiten(`${title} ${snippet}`),
         });
       }
       console.log(`${src.name}: ${items.length} artikel dalam ${FRESHNESS_HOURS} jam terakhir`);
